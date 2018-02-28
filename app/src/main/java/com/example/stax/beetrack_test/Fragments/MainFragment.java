@@ -2,13 +2,16 @@ package com.example.stax.beetrack_test.Fragments;
 
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
+import com.example.stax.beetrack_test.Adapters.FavoritesAdapter;
 import com.example.stax.beetrack_test.Adapters.MainAdapter;
 import com.example.stax.beetrack_test.R;
 
@@ -17,7 +20,8 @@ import com.example.stax.beetrack_test.R;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment {
+public class
+MainFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -26,7 +30,8 @@ public class MainFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private static MainAdapter mAdapter;
+    private static RecyclerView mRecyclerView;
 
     public MainFragment() {
         // Required empty public constructor
@@ -63,15 +68,22 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
-        RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.main_recycler);
-        recyclerView.setHasFixedSize(true);
-        MainAdapter mainAdapter = new MainAdapter();
-        recyclerView.setAdapter(mainAdapter);
+        mRecyclerView = v.findViewById(R.id.main_recycler);
+        mRecyclerView.setHasFixedSize(true);
+        mAdapter = new MainAdapter();
+        mRecyclerView.setAdapter(mAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
         // Inflate the layout for this fragment
         return v;
     }
-
+    public void update(ProgressBar progressBar){
+        mAdapter = new MainAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        progressBar.setVisibility(View.GONE);
+    }
 }

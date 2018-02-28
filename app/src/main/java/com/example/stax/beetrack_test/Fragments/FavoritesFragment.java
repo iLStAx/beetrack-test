@@ -8,9 +8,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.stax.beetrack_test.Adapters.FavoritesAdapter;
 import com.example.stax.beetrack_test.R;
+
+import java.net.PortUnreachableException;
 
 import io.realm.RealmResults;
 
@@ -28,7 +31,8 @@ public class FavoritesFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private static FavoritesAdapter mAdapter;
+    private static RecyclerView mRecyclerView;
 
     public FavoritesFragment() {
         // Required empty public constructor
@@ -65,16 +69,24 @@ public class FavoritesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_favorites, container, false);
-        RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.reclycer_favorites);
-        recyclerView.setHasFixedSize(true);
-        FavoritesAdapter favoritesAdapter = new FavoritesAdapter();
-        recyclerView.setAdapter(favoritesAdapter);
+        mRecyclerView = v.findViewById(R.id.reclycer_favorites);
+        mRecyclerView.setHasFixedSize(true);
+        mAdapter = new FavoritesAdapter();
+        mRecyclerView.setAdapter(mAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
 
         // Inflate the layout for this fragment
         return v;
     }
 
+    public void update(ProgressBar progressBar){
+        mAdapter = new FavoritesAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        progressBar.setVisibility(View.GONE);
+    }
 }

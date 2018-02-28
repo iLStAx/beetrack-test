@@ -40,6 +40,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainViewHolder>{
         this.articles = articles;
     }
 
+
     public MainAdapter(){
         articles = Collections.emptyList();
         Retrofit.Builder builder = new Retrofit.Builder();

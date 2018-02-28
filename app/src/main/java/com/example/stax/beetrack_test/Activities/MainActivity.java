@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -20,11 +21,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.webkit.WebView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.stax.beetrack_test.Fragments.FavoritesFragment;
 import com.example.stax.beetrack_test.Fragments.MainFragment;
 import com.example.stax.beetrack_test.R;
+
+import java.util.ArrayList;
+
+import io.realm.ObjectChangeSet;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +64,26 @@ public class MainActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager){
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                if(tab.getPosition() == 1){
+                    FavoritesFragment f = new FavoritesFragment();
+                    f.update(mProgressBar);
+                }else{
+                    MainFragment f = new MainFragment();
+                    f.update(mProgressBar);
+                }
+            }
+        });
+        mProgressBar.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -95,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -103,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-
             switch(position){
                 case 0:
                     return new MainFragment();
@@ -119,5 +140,6 @@ public class MainActivity extends AppCompatActivity {
             // Show 3 total pages.
             return 2;
         }
+
     }
 }

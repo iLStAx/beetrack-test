@@ -15,15 +15,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.percent.PercentRelativeLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/news_image"
                 android:scaleType="centerCrop"
-                app:layout_aspectRatio="178%"
-                app:layout_widthPercent="100%" />
-        </android.support.percent.PercentRelativeLayout>
+                android:layout_width="match_parent"
+                android:layout_height="200dp"/>
+        </android.support.constraint.ConstraintLayout>
 
         <TextView
             android:id="@+id/news_title"

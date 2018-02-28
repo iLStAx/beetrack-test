@@ -1,12 +1,21 @@
 package com.example.stax.beetrack_test.Models;
 
-import com.example.stax.beetrack_test.Adapters.FavoritesAdapter;
-import com.example.stax.beetrack_test.Interfaces.Repository;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.example.stax.beetrack_test.Interfaces.Repository;
+import com.example.stax.beetrack_test.R;
+
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import io.realm.ObjectChangeSet;
+import io.realm.OrderedCollectionChangeSet;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmObjectChangeListener;
 import io.realm.RealmResults;
 
 /**
@@ -14,38 +23,56 @@ import io.realm.RealmResults;
  */
 
 public class ArticleRepository implements Repository<Article> {
-    private static Realm db;
+
+    private Realm mDB;
+    private RealmObjectChangeListener<Article> mDListener = new RealmObjectChangeListener<Article>() {
+        @Override
+        public void onChange(Article article, @Nullable ObjectChangeSet changeSet) {
+            if (changeSet.isDeleted()) {
+                System.out.println("Se ha eliminado de favoritos");
+            }
+        }
+    };
+    private RealmChangeListener<RealmResults<Article>> mIListener = new RealmChangeListener<RealmResults<Article>>() {
+        @Override
+        public void onChange(RealmResults<Article> articles) {
+            System.out.println("Se ha añadido a favoritos: " + articles.last().getTitle());
+        }
+    };
 
     public ArticleRepository(){
-        db = Realm.getDefaultInstance();
+        mDB = Realm.getDefaultInstance();
     }
 
     @Override
     public void add(Article item) {
+        RealmResults<Article> results = mDB.where(Article.class).findAll();
         try {
-            db.beginTransaction();
-            db.insertOrUpdate(item);
-            db.commitTransaction();
+            results.addChangeListener(mIListener);
+            mDB.beginTransaction();
+            mDB.insertOrUpdate(item);
+            mDB.commitTransaction();
         }finally {
-            db.close();
+            mDB.close();
         }
     }
 
     @Override
     public void delete(Article item) {
-        RealmResults<Article> results = db.where(Article.class).equalTo("title",item.getTitle()).findAll();
+        RealmResults<Article> results = mDB.where(Article.class).equalTo("title",item.getTitle()).findAll();
         try{
-            db.beginTransaction();
+            item.addChangeListener(mDListener);
+            mDB.beginTransaction();
             results.deleteAllFromRealm();
-            db.commitTransaction();
+            mDB.commitTransaction();
         }finally {
-            db.close();
+            mDB.close();
         }
     }
 
     @Override
     public List<Article> getAll() {
-        RealmResults<Article> articles = db.where(Article.class).findAll();
+        RealmResults<Article> articles = mDB.where(Article.class).findAll();
         articles.load();
         return articles;
     }
