@@ -25,12 +25,10 @@ import io.realm.RealmResults;
 public class ArticleRepository implements Repository<Article> {
 
     private Realm mDB;
-    private RealmObjectChangeListener<Article> mDListener = new RealmObjectChangeListener<Article>() {
+    private RealmChangeListener<RealmResults<Article>> mDListener = new RealmChangeListener<RealmResults<Article>>() {
         @Override
-        public void onChange(Article article, @Nullable ObjectChangeSet changeSet) {
-            if (changeSet.isDeleted()) {
-                System.out.println("Se ha eliminado de favoritos");
-            }
+        public void onChange(RealmResults<Article> articles) {
+            System.out.println("Se eliminó de favoritos: ");
         }
     };
     private RealmChangeListener<RealmResults<Article>> mIListener = new RealmChangeListener<RealmResults<Article>>() {
@@ -61,7 +59,7 @@ public class ArticleRepository implements Repository<Article> {
     public void delete(Article item) {
         RealmResults<Article> results = mDB.where(Article.class).equalTo("title",item.getTitle()).findAll();
         try{
-            item.addChangeListener(mDListener);
+            results.addChangeListener(mDListener);
             mDB.beginTransaction();
             results.deleteAllFromRealm();
             mDB.commitTransaction();

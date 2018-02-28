@@ -64,7 +64,6 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesViewHolder> 
         holder.getNewsCheckbox().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                unSetCheckBoxes(JsonContent.getsArticles(),article.getTitle());
                 ArticleRepository db = new ArticleRepository();
                 db.delete(article);
                 List<Article> articles = db.getAll();
@@ -77,13 +76,5 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesViewHolder> 
     @Override
     public int getItemCount() {
         return articles.size();
-    }
-
-    public void unSetCheckBoxes(List<Article> articles, String title){
-        for(int i = 0; i < articles.size(); i++){
-            if(articles.get(i).getTitle().equals(title)){
-                articles.get(i).setFavorites(false);
-            }
-        }
     }
 }
